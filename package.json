@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "server": "node src/server.js"
+    "server": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "Sörel Haller",
@@ -12,5 +12,8 @@
   "description": "",
   "dependencies": {
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
