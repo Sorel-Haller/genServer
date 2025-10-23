@@ -1,20 +1,14 @@
 import { Router } from "express";
+import { getAllBooks, getBookById, updateBook, deleteBook, createBook }  from "../controllers/books.controller";
+
 
 const router = Router();
 
-router.get('/books', (request, response) => {});
-router.get('/books/:id', (request, response) => {
-    response.json({
-        id: request.params.id,
-        title: "Sample Book",
-    });        
-});
-
-
-
-router.post('/books', (request, response) => {});
-router.put('/books/:id', (request, response) => {});
-router.delete('/books/:id', (request, response) => {});
+router.get('/books', getAllBooks);
+router.get('/books/:id', getBookById);
+router.post('/books', createBook);
+router.put('/books/:id', updateBook);
+router.delete('/books/:id', deleteBook);
 
 
 export default router;
