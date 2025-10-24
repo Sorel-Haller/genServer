@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { getAllBooks, getBookById, updateBook, deleteBook, createBook }  from "../controllers/books.controller.js";
 
-
 const router = Router();
 
 router.get('/books', getAllBooks);

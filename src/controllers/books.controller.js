@@ -12,23 +12,8 @@ export const getBookById = (request, response) => {
     });
 }
 
-export const createBook = (request, response) => {
-    response.json ({
-        id: request.params.id,
-        message: "Book created successfully",
-    });
-}
+export const createBook = (request, response) => {}
 
-export const updateBook = (request, response) => {
-    response.json ({
-        id: request.params.id,
-        message: "Book updated successfully",
-    });
-}
+export const updateBook = (request, response) => {}
 
-export const deleteBook = (request, response) => {
-    response.json ({
-        id: request.params.id,
-        message: "Book deleted successfully",
-    });
-}   
+export const deleteBook = (request, response) => {}   
