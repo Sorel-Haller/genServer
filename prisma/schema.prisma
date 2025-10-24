@@ -6,6 +6,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Book {
@@ -28,11 +29,11 @@ model Author {
 }
 
 model AuthorOnBook {
+  id Int @id @default(autoincrement())
   book Book @relation(fields: [book_id], references: [id])
   book_id Int
   author Author @relation(fields: [author_id], references: [id])
   author_id Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  @@id([author_id, book_id])
 }
