@@ -47,9 +47,66 @@ export const getBookById = async (request, response) => { // tahame pärida 1 ra
 
 };
 
-export const createBook = (request, response) => {};
+export const createBook = async (request, response) => {
+    try {
+        const {title, description, thumbnail_url, release_year, } = request.body; //saame kliendilt raamatu andmed
+        
+        const newBook = await prisma.book.create({
+            data: {
+                title,
+                description,
+                thumbnail_url,
+                release_year: Number(release_year),
+            }
+        });
 
-export const updateBook = (request, response) => {};
+        response.status(201).json({
+            message: 'Book created successfully',
+            data: newBook
+        })
+    } catch (exception) {
+        response.status(500).json({
+            message: 'Something went wrong',
+            error: exception.message
+        })
+    }
+};
+
+export const updateBook = async (request, response) => {
+    try {
+        const { id } = request.params;
+        const { title, description, thumbnail_url, release_year } = request.body;
+
+        const updatedBook = await prisma.book.update({
+            where: {
+                id: Number(id)
+            },
+            data: {
+                title,
+                description,
+                thumbnail_url,
+                release_year: Number(release_year),
+            }
+        });
+
+        if (!updatedBook) {
+            return response.status(404).json({
+                message: 'Book not found'
+            });
+        }
+
+        response.status(200).json({
+            message: 'Book updated successfully',
+            data: updatedBook
+        });
+
+    } catch (error) {
+        response.status(500).json({
+            message: 'Something went wrong',
+            error: exception.message
+        })
+    }
+};
 
 export const deleteBook = async (request, response) => {
     try {
