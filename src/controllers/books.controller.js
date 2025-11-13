@@ -19,7 +19,6 @@ export const getAllBooks = async (request, response) => {
   }
 };
 
-
 export const getBookById = async (request, response) => { // funktsioon ühe raamatu pärimiseks
   // URL näide: https://raamatupood.ee/api/v1/books/555
   try {

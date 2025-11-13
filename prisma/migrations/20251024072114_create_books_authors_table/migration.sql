@@ -3,7 +3,7 @@ CREATE TABLE `Book` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
-    `tumbnail_url` VARCHAR(191) NOT NULL,
+    `thumbnail_url` VARCHAR(191) NOT NULL,
     `release_year` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,

@@ -12,7 +12,7 @@ model Book {
   id Int @id @default(autoincrement())
   title String
   description String
-  tumbnail_url String
+  thumbnail_url String
   release_year Int
   authors AuthorOnBook[]
   created_at DateTime @default(now())

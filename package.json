@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "server": "node --watch src/server.js",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:seed": "prisma db seed"
   },
   "keywords": [],
   "author": "Sörel Haller",
@@ -17,7 +18,11 @@
     "mysql2": "^3.15.3"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@prisma/client": "^6.18.0",
     "prisma": "^6.18.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }
