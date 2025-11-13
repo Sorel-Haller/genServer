@@ -4,7 +4,7 @@ import db from './config/db.js';
 
 
 const app = express();
-const PORT = 3000;
+const PORT = 8000;
 
 //app.use(express.json());
 
@@ -14,7 +14,7 @@ app.get('/welcome', (request, response) => { //päring jõuab serverini ja saab 
     });
 });
 
-app.use(bookRoutes);
+app.use('/api/v1', bookRoutes); 
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
