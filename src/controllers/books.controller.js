@@ -49,6 +49,12 @@ export const createBook = async (request, response) => {
     try {
         const {title, description, thumbnail_url, release_year, } = request.body; // võtame kliendilt saadetud andmed uue raamatu loomiseks
         
+    //    if (!title || !description || !thumbnail_url || !release_year) { // kontrollime, kas kõik vajalikud väljad on olemas
+    //        return response.status(400).json({ // kui mõni väli puudub, tagastame 400 Bad Request
+    //            message: 'Missing required fields'
+    //        });
+    //    }
+
         const newBook = await prisma.book.create({ // Prisma abil loome uue kirje
             data: {
                 title,                 // raamatu pealkiri
