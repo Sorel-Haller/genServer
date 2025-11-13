@@ -1,4 +1,4 @@
-import Joi, { any } from "joi";
+import Joi from "joi";
 
 export const bookSchema = Joi.object({                             // rules for the title, description, thumbnail_url and release_year
     title: Joi.string().max(255).required(),

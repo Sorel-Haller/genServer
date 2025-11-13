@@ -19,7 +19,7 @@ export const validate = (schema) => (request, response, next) => {
         }, {});
         
         return response.status(400).json({          // tagastame 400 Bad Request koos veateadetega
-            message: typeof error === "ValidationError" ? errors.message : 'Validation failed', 
+            message: typeof error === "ValidationError" ? error.message : 'Validation failed', 
             errors: { ...errorBag }
         });
     }

@@ -6,7 +6,7 @@ import db from './config/db.js';
 const app = express();
 const PORT = 8000;
 
-//app.use(express.json());
+app.use(express.json());
 
 app.get('/welcome', (request, response) => { //päring jõuab serverini ja saab vastuse
     response.send({
