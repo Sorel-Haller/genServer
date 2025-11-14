@@ -12,10 +12,10 @@ import {
 
 const router = Router();
 
-router.get('/', getAllAuthors);
-router.get('/:id', getAuthorById);
-router.post('/', validate(authorSchema), createAuthor);
-router.put('/:id', validate(authorSchema), updateAuthor);
-router.delete('/:id', deleteAuthor);
+router.get('/authors', getAllAuthors);
+router.get('/authors/:id', getAuthorById);
+router.post('/authors', validate(authorSchema), createAuthor);
+router.put('/authors/:id', validate(authorSchema), updateAuthor);
+router.delete('/authors/:id', deleteAuthor);
 
 export default router;

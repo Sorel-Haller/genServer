@@ -16,7 +16,7 @@ app.get('/welcome', (request, response) => { //päring jõuab serverini ja saab 
 });
 
 app.use('/api/v1', bookRoutes); 
-app.use('/api/v1/authors', authorsRoutes);
+app.use('/api/v1', authorsRoutes);
 
 
 app.listen(PORT, () => {
