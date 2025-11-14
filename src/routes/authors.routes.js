@@ -1,4 +1,7 @@
 import { Router } from "express";
+import { validate } from "../middleware/validate.middleware.js";
+import { authorSchema } from "../validations/author.validation.js";
+
 import { 
   getAllAuthors, 
   getAuthorById, 
@@ -11,8 +14,8 @@ const router = Router();
 
 router.get('/', getAllAuthors);
 router.get('/:id', getAuthorById);
-router.post('/', createAuthor);
-router.put('/:id', updateAuthor);
+router.post('/', validate(authorSchema), createAuthor);
+router.put('/:id', validate(authorSchema), updateAuthor);
 router.delete('/:id', deleteAuthor);
 
 export default router;
