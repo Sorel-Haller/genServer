@@ -26,8 +26,6 @@ export const getAllBooks = async (request, response) => {
   }
 };
 
-
-
 export const getBookById = async (request, response) => {
     try {
         const idFromURL = request.params?.id;

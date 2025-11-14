@@ -1,5 +1,6 @@
 import express from 'express';
 import bookRoutes from './routes/book.routes.js';
+import authorsRoutes from './routes/authors.routes.js';
 import db from './config/db.js';
 
 
@@ -15,6 +16,8 @@ app.get('/welcome', (request, response) => { //päring jõuab serverini ja saab 
 });
 
 app.use('/api/v1', bookRoutes); 
+app.use('/api/v1/authors', authorsRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
