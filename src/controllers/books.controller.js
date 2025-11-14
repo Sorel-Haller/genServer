@@ -1,74 +1,85 @@
-import { response } from 'express';
-import prisma from '../config/prisma.config.js';
-
+import { skip } from '@prisma/client/runtime/library';
+import prisma from '../config/prisma.js';
 
 export const getAllBooks = async (request, response) => {
-  try {
-    const books = await prisma.book.findMany(); // prisma ORM kaudu toome kõik raamatud andmebaasist
-    response.json({                  
-      message: 'All books',  // saadame tagasi sõnumi, et kõik raamatud on saadaval
-      data: books            // lisame andmevälja, kus on kõik leitud raamatud
-     }) 
-  
-  } catch (exception) {       // kui päringu või andmebaasiga tekib probleem
-    console.log(exception);   // logime veateate serveri konsooli
-    response.status(500).json({ // saadame kliendile error vastuse
-      message: "Something went wrong",
-      error: exception.message
-    })
-  }
+    try {
+
+        // GET https://raamatukogu.ee/api/v1/books?sort=-title&include=authors&filter
+        
+        const { sort, take} = request.query;
+        console.log(sort);
+
+        console.log(request.query);
+        
+        const books = await prisma.book.findMany({
+            orderBy: { 
+                sort: '-title',
+                title: 'asc',
+                take: take,
+                skip: skip,
+             },
+
+
+    });
+        response.json({
+            message: 'All books',
+            data: books
+        })
+    } catch (exception) {
+        console.log(exception);
+        response.status(500).json({
+            message: "Something went wrong",
+            error: exception.message
+        })
+    }
 };
 
-export const getBookById = async (request, response) => { // funktsioon ühe raamatu pärimiseks
-  // URL näide: https://raamatupood.ee/api/v1/books/555
-  try {
-      const idFromUrl = request.params?.id; // võtame URL-ist raamatu ID, ? - turvaline ligipääs, kui param olemas
+export const getBookById = async (request, response) => {
+    try {
+        const idFromURL = request.params?.id;
 
-      const book = await prisma.book.findUnique({ // Prisma abil otsime ühe raamatu unikaalse ID järgi
-        where: {
-          id: Number(idFromUrl)  // teisendame ID numbriks, sest andmebaasis on number
+        const book = await prisma.book.findUnique({
+            where: {
+                id: Number(idFromURL)
+            }
+        });
+
+        if (!book) {
+            response.status(404).json({
+                message: 'Not Found'
+            })
         }
-      });
 
-    response.status(200).json({ // kui raamat leitakse, saadame tagasi 200 ja raamatu andmed
-      message: 'Successfully Found Book',
-      data:book
-  })  
-
-   } catch (exception) {  // kui midagi läheb valesti
-    response.status(500).json({
-      message: 'Something went wrong',
-      error: exception.message
-    })
-
-   }
-
+        response.status(200).json({
+            message: 'Successfully Found Book',
+            data: book
+        })
+    } catch (exception) {
+        response.status(500).json({
+            message: 'Something went wrong',
+            error: exception.message
+        })
+    }
 };
 
 export const createBook = async (request, response) => {
     try {
-        const {title, description, thumbnail_url, release_year, } = request.body; // võtame kliendilt saadetud andmed uue raamatu loomiseks
-        
-    //    if (!title || !description || !thumbnail_url || !release_year) { // kontrollime, kas kõik vajalikud väljad on olemas
-    //        return response.status(400).json({ // kui mõni väli puudub, tagastame 400 Bad Request
-    //            message: 'Missing required fields'
-    //        });
-    //    }
+        const { title, description, thumbnail_url, release_year } = request.body;
 
-        const newBook = await prisma.book.create({ // Prisma abil loome uue kirje
+        const newBook = await prisma.book.create({
             data: {
-                title,                 // raamatu pealkiri
-                description,           // raamatu kirjeldus
-                thumbnail_url,         // raamatu pisipilt URL
-                release_year: Number(release_year), // välja aastaarv teisendame numbriks
+                title,
+                description,
+                thumbnail_url,
+                release_year: Number(release_year),
             }
         });
 
-        response.status(201).json({ // 201 Created status koos uue raamatu andmetega
-            message: 'Book created successfully',
+        response.status(201).json({
+            message: 'Successfully Created Book',
             data: newBook
         })
-    } catch (exception) {  // kui midagi läheb valesti
+    } catch (exception) {
         response.status(500).json({
             message: 'Something went wrong',
             error: exception.message
@@ -78,12 +89,12 @@ export const createBook = async (request, response) => {
 
 export const updateBook = async (request, response) => {
     try {
-        const { id } = request.params; // võtame URL-ist raamatu ID
-        const { title, description, thumbnail_url, release_year } = request.body; // võtame kliendi poolt saadetud uuendatud andmed
+        const { id } = request.params;
+        const { title, description, thumbnail_url, release_year } = request.body;
 
-        const updatedBook = await prisma.book.update({ // Prisma abil uuendame raamatu kirjet
+        const updatedBook = await prisma.book.update({
             where: {
-                id: Number(id) // ID teisendame numbriks
+                id: Number(id),
             },
             data: {
                 title,
@@ -93,18 +104,18 @@ export const updateBook = async (request, response) => {
             }
         });
 
-        if (!updatedBook) { // kui raamatut ei leita, tagastame 404
-            return response.status(404).json({
-                message: 'Book not found'
-            });
+        if (!updatedBook) {
+            response.status(404).json({
+                message: 'Not Found'
+            })
         }
 
-        response.status(200).json({ // kui uuendus õnnestus, tagastame 200 ja uuendatud raamatu
-            message: 'Book updated successfully',
+        response.status(200).json({
+            message: 'Successfully Updated Book',
             data: updatedBook
-        });
+        })
 
-    } catch (exception) {  // kui midagi läheb valesti
+    } catch (exception) {
         response.status(500).json({
             message: 'Something went wrong',
             error: exception.message
@@ -114,16 +125,20 @@ export const updateBook = async (request, response) => {
 
 export const deleteBook = async (request, response) => {
     try {
-        const bookId = request.params?.id; // võtame URL-ist raamatu ID
+        const bookId = request.params?.id;
 
-        await prisma.book.delete({ // Prisma abil kustutame raamatu ID järgi
+        await prisma.book.delete({
             where: {
-                id: Number(bookId) // teisendame ID numbriks
+                id: Number(bookId)
             }
         })
-    } catch (exception) { // kui kustutamisel probleem
-        response.status(200).json({ // siin veateate asemel on sõnum "Book deleted successfully" (veidi eksitav)
-            message: 'Book deleted successfully',
+
+        response.status(200).json({
+            message: 'Successfully Deleted',
+        })
+    } catch (exception) {
+        response.status(500).json({
+            message: 'Something went wrong',
             error: exception.message
         })
     }
