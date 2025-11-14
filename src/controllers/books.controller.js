@@ -2,37 +2,31 @@ import { skip } from '@prisma/client/runtime/library';
 import prisma from '../config/prisma.js';
 
 export const getAllBooks = async (request, response) => {
-    try {
+  try {
+    const { sort, sort_direction, take, page } = request.query;
 
-        // GET https://raamatukogu.ee/api/v1/books?sort=-title&include=authors&filter
-        
-        const { sort, take} = request.query;
-        console.log(sort);
-
-        console.log(request.query);
-        
-        const books = await prisma.book.findMany({
-            orderBy: { 
-                sort: '-title',
-                title: 'asc',
-                take: take,
-                skip: skip,
-             },
-
-
+    const books = await prisma.book.findMany({
+      orderBy: {
+        [sort || 'title']: sort_direction || 'asc'
+      },
+        skip: (Number(take) || 10) * ((Number(page) || 1) - 1),
+        take: Number(take) || 10
     });
-        response.json({
-            message: 'All books',
-            data: books
-        })
-    } catch (exception) {
-        console.log(exception);
-        response.status(500).json({
-            message: "Something went wrong",
-            error: exception.message
-        })
-    }
+
+    response.json({
+      message: 'All books',
+      data: books
+    });
+  } catch (exception) {
+    console.log(exception);
+    response.status(500).json({
+      message: "Something went wrong",
+      error: exception.message
+    });
+  }
 };
+
+
 
 export const getBookById = async (request, response) => {
     try {
