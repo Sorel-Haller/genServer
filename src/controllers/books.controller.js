@@ -1,137 +1,108 @@
-import { skip } from '@prisma/client/runtime/library';
 import prisma from '../config/prisma.js';
 
-export const getAllBooks = async (request, response) => {
+// GET all books with pagination and sorting
+export const getAllBooks = async (req, res) => {
   try {
-    const { sort, sort_direction, take, page } = request.query;
+    const { sort, sort_direction, take, page } = req.query;
 
     const books = await prisma.book.findMany({
       orderBy: {
-        [sort || 'title']: sort_direction || 'asc'
+        [sort || 'title']: sort_direction || 'asc',
       },
-        skip: (Number(take) || 10) * ((Number(page) || 1) - 1),
-        take: Number(take) || 10
+      skip: (Number(take) || 10) * ((Number(page) || 1) - 1),
+      take: Number(take) || 10,
     });
 
-    response.json({
+    res.status(200).json({
       message: 'All books',
-      data: books
+      data: books,
     });
-  } catch (exception) {
-    console.log(exception);
-    response.status(500).json({
-      message: "Something went wrong",
-      error: exception.message
-    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Something went wrong', error: err.message });
   }
 };
 
-export const getBookById = async (request, response) => {
-    try {
-        const idFromURL = request.params?.id;
+// GET book by ID
+export const getBookById = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ message: 'Invalid book ID' });
 
-        const book = await prisma.book.findUnique({
-            where: {
-                id: Number(idFromURL)
-            }
-        });
+    const book = await prisma.book.findUnique({ where: { id } });
 
-        if (!book) {
-            response.status(404).json({
-                message: 'Not Found'
-            })
-        }
+    if (!book) return res.status(404).json({ message: 'Book not found' });
 
-        response.status(200).json({
-            message: 'Successfully Found Book',
-            data: book
-        })
-    } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
-    }
+    res.status(200).json({ message: 'Book found', data: book });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Something went wrong', error: err.message });
+  }
 };
 
-export const createBook = async (request, response) => {
-    try {
-        const { title, description, thumbnail_url, release_year } = request.body;
+// CREATE a new book
+export const createBook = async (req, res) => {
+  try {
+    const { title, description, thumbnail_url, release_year } = req.body;
 
-        const newBook = await prisma.book.create({
-            data: {
-                title,
-                description,
-                thumbnail_url,
-                release_year: Number(release_year),
-            }
-        });
+    const newBook = await prisma.book.create({
+      data: {
+        title,
+        description,
+        thumbnail_url,
+        release_year: Number(release_year),
+      },
+    });
 
-        response.status(201).json({
-            message: 'Successfully Created Book',
-            data: newBook
-        })
-    } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
-    }
+    res.status(201).json({ message: 'Book created', data: newBook });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Something went wrong', error: err.message });
+  }
 };
 
-export const updateBook = async (request, response) => {
-    try {
-        const { id } = request.params;
-        const { title, description, thumbnail_url, release_year } = request.body;
+// UPDATE an existing book
+export const updateBook = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ message: 'Invalid book ID' });
 
-        const updatedBook = await prisma.book.update({
-            where: {
-                id: Number(id),
-            },
-            data: {
-                title,
-                description,
-                thumbnail_url,
-                release_year: Number(release_year),
-            }
-        });
+    const { title, description, thumbnail_url, release_year } = req.body;
 
-        if (!updatedBook) {
-            response.status(404).json({
-                message: 'Not Found'
-            })
-        }
+    const updatedBook = await prisma.book.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        thumbnail_url,
+        release_year: Number(release_year),
+      },
+    });
 
-        response.status(200).json({
-            message: 'Successfully Updated Book',
-            data: updatedBook
-        })
+    res.status(200).json({ message: 'Book updated', data: updatedBook });
+  } catch (err) {
+    console.error(err);
 
-    } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
-    }
+    if (err.code === 'P2025') return res.status(404).json({ message: 'Book not found' });
+
+    res.status(500).json({ message: 'Something went wrong', error: err.message });
+  }
 };
 
-export const deleteBook = async (request, response) => {
-    try {
-        const bookId = request.params?.id;
+// DELETE a book
+export const deleteBook = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ message: 'Invalid book ID' });
 
-        await prisma.book.delete({
-            where: {
-                id: Number(bookId)
-            }
-        })
+    await prisma.book.delete({ where: { id } });
 
-        response.status(200).json({
-            message: 'Successfully Deleted',
-        })
-    } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
-    }
+    res.status(200).json({ message: 'Book deleted successfully' });
+  } catch (err) {
+    console.error(err);
+
+    if (err.code === 'P2025') return res.status(404).json({ message: 'Book not found' });
+
+    res.status(500).json({ message: 'Something went wrong', error: err.message });
+  }
 };

@@ -8,7 +8,7 @@ import {
   createAuthor, 
   updateAuthor, 
   deleteAuthor 
-} from "../controllers/authors.controller.js";
+} from "../controllers/author.controller.js";
 
 const router = Router();
 

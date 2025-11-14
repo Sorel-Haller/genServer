@@ -1,6 +1,6 @@
 import express from 'express';
 import bookRoutes from './routes/book.routes.js';
-import authorsRoutes from './routes/authors.routes.js';
+import authorsRoutes from './routes/author.routes.js';
 import db from './config/db.js';
 
 
