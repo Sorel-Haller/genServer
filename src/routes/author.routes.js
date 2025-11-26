@@ -1,14 +1,7 @@
-import { Router } from "express";
-import { validate } from "../middleware/validate.middleware.js";
-import { authorSchema } from "../validations/author.validation.js";
-
-import { 
-  getAllAuthors, 
-  getAuthorById, 
-  createAuthor, 
-  updateAuthor, 
-  deleteAuthor 
-} from "../controllers/author.controller.js";
+import { Router } from 'express';
+import { validate } from "../middlewares/validator.middleware.js";
+import {authorSchema} from "../validations/author.validation.js";
+import { getAllAuthors, getAuthorById, createAuthor, updateAuthor, deleteAuthor } from '../controllers/authors.controller.js';
 
 const router = Router();
 

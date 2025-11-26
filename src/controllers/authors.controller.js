@@ -1,34 +1,14 @@
 import prisma from '../config/prisma.js';
-import { QueryBuilder } from "../utils/QueryBuilder.js";
 
-export const getAllBooks = async (request, response) => {
+export const getAllAuthors = async (request, response) => {
     try {
-        const Builder = new QueryBuilder(request.query, {
-            defaultSort: 'created_at',
-            defaultTake: 20,
-            allowedSorts: ['id', 'title', 'description', 'created_at', 'updated_at'],
-            allowedSearchFields: ['title', 'description'],
-            allowedIncludes: {
-                'authors': { include: { author: true }}
-            }
-        });
 
-        const prismaQuery = Builder.buildPrismaQuery();
+        const authors = await prisma.author.findMany();
 
-        console.log(prismaQuery);
-
-        const [books, count] = await Promise.all([
-            prisma.book.findMany(prismaQuery),
-            prisma.book.count({ where: prismaQuery.where })
-        ]);
-
-        const meta = Builder.getPaginationMeta(count);
-
-        response.status(200).json({
-            message: 'All books',
-            data: books,
-            meta,
-        });
+        response.json({
+            message: 'All authors',
+            data: authors
+        })
     } catch (exception) {
         console.log(exception);
         response.status(500).json({
@@ -38,11 +18,11 @@ export const getAllBooks = async (request, response) => {
     }
 };
 
-export const getBookById = async (request, response) => {
+export const getAuthorById = async (request, response) => {
     try {
         const idFromURL = request.params?.id;
 
-        const book = await prisma.book.findUnique({
+        const book = await prisma.author.findUnique({
             where: {
                 id: Number(idFromURL)
             }
@@ -55,7 +35,7 @@ export const getBookById = async (request, response) => {
         }
 
         response.status(200).json({
-            message: 'Successfully Found Book',
+            message: 'Successfully Found Author',
             data: book
         })
     } catch (exception) {
@@ -66,21 +46,18 @@ export const getBookById = async (request, response) => {
     }
 };
 
-export const createBook = async (request, response) => {
+export const createAuthor = async (request, response) => {
     try {
-        const { title, description, thumbnail_url, release_year } = request.body;
+        const { name } = request.body;
 
-        const newBook = await prisma.book.create({
+        const newBook = await prisma.author.create({
             data: {
-                title,
-                description,
-                thumbnail_url,
-                release_year: Number(release_year),
+                name
             }
         });
 
         response.status(201).json({
-            message: 'Successfully Created Book',
+            message: 'Successfully Created Author',
             data: newBook
         })
     } catch (exception) {
@@ -91,20 +68,17 @@ export const createBook = async (request, response) => {
     }
 };
 
-export const updateBook = async (request, response) => {
+export const updateAuthor = async (request, response) => {
     try {
         const { id } = request.params;
-        const { title, description, thumbnail_url, release_year } = request.body;
+        const { name } = request.body;
 
-        const updatedBook = await prisma.book.update({
+        const updatedBook = await prisma.author.update({
             where: {
                 id: Number(id),
             },
             data: {
-                title,
-                description,
-                thumbnail_url,
-                release_year: Number(release_year),
+                name
             }
         });
 
@@ -115,7 +89,7 @@ export const updateBook = async (request, response) => {
         }
 
         response.status(200).json({
-            message: 'Successfully Updated Book',
+            message: 'Successfully Updated Author',
             data: updatedBook
         })
 
@@ -127,11 +101,11 @@ export const updateBook = async (request, response) => {
     }
 };
 
-export const deleteBook = async (request, response) => {
+export const deleteAuthor = async (request, response) => {
     try {
         const bookId = request.params?.id;
 
-        await prisma.book.delete({
+        await prisma.author.delete({
             where: {
                 id: Number(bookId)
             }

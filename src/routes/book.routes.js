@@ -1,19 +1,15 @@
-import { Router } from "express"; //nagu wifi router, selle sees on 404 sisse ehitatud,  kui vastust ei leia siis rakendub see
-import { validate } from "../middleware/validate.middleware.js";
+import { Router } from 'express';
+import { validateBody, validateQuery } from "../middlewares/validator.middleware.js";
 import { bookSchema } from "../validations/book.validation.js";
-import { getAllBooks, getBookById, updateBook, deleteBook, createBook }  from "../controllers/books.controller.js";
+import * as BookController from "../controllers/books.controller.js";
+import { bookQuerySchema } from "../validations/bookQuery.validation.js";
 
 const router = Router();
 
-router.get('/books', getAllBooks);   //kõikide raamatute toomine
-// https://raamatupood.ee/api/v1/books/(:id) => 838383 kontrollime kas sellle id-ga raamat on olemas. Endpoint URL
-
-router.get('/books/:id', getBookById);  //üksiku raamatu toomine, koolon tähendab dünaamilisust, sinna paneb klient numbri 
-// router.get('/books/:id/authors/:authirId);
-
-router.post('/books', validate(bookSchema), createBook);  //create
-router.put('/books/:id', validate(bookSchema), updateBook); //muutmine
-router.delete('/books/:id', deleteBook);
-
+router.get('/books', validateQuery(bookQuerySchema) ,BookController.getAllBooks);
+router.get('/books/:id', BookController.getBookById);
+router.post('/books', validateBody(bookSchema), BookController.createBook);
+router.put('/books/:id', validateBody(bookSchema), BookController.updateBook);
+router.delete('/books/:id', BookController.deleteBook);
 
 export default router;
