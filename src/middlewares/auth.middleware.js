@@ -25,5 +25,3 @@ export const authenticateToken = async (request, response, next) => {
         next(exception);
     }
 };
-  
-     
