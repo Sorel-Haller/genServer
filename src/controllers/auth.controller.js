@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcryptjs from 'bcryptjs';  // Kasutame bcryptjs, mitte bcrypt
 import prisma from '../config/prisma.js';
+import dotenv from 'dotenv'
 
 // Kasutaja registreerimine
 export const register = async (request, response) => {
