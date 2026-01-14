@@ -1,6 +1,7 @@
 import prisma from '../config/prisma.js';
 import { QueryBuilder } from "../utils/QueryBuilder.js";
 import AppError from '../utils/AppError.js';
+import NotFoundError from '../utils/NotFoundError.js';
 
 export const getAllBooks = async (request, response) => {
     try {
@@ -49,9 +50,7 @@ export const getBookById = async (request, response, next) => {
             }
         });
 
-        if (!book) {
-            throw new AppError('Book with id ${idFromURL} not found');
-        }
+        if (!book) throw new NotFoundError("Book with id ${idFromURL} not found");
 
         response.status(200).json({
             message: 'Successfully Found Book',

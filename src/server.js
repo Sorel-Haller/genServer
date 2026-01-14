@@ -3,7 +3,7 @@ import bookRoutes from './routes/book.routes.js';
 import authorRoutes from "./routes/author.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
-import { errorHandler } from ".middlewares/errorHandler.js";
+import errorHandler from "./middlewares/errorHandler.js"; 
 
 const app = express();
 const PORT = 3000;
@@ -19,9 +19,9 @@ app.get('/welcome', (request, response) => {
 });
 
 // Erinevad marsuudid eraldi baasteedega, et vältida konflikte
-app.use('/api/v1', bookRoutes);    // Raamatud
-app.use('/api/v1', authorRoutes);  // Autorid
-app.use('/api/v1', authRoutes);  // Autentimine (login, register)
+app.use('/api/v1', bookRoutes);
+app.use('/api/v1', authorRoutes);
+app.use('/api/v1', authRoutes);
 app.use('/api/v1', categoryRoutes); 
 
 app.use(errorHandler);
