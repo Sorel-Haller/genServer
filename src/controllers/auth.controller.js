@@ -81,11 +81,7 @@ export const login = async (request, response) => {
         // Kontrollime, kas kasutaja on olemas
         const user = await prisma.user.findUnique({ where: { email } });
 
-        if (!user) {
-            return response.status(401).json({
-                message: 'Invalid credentials'
-            });
-        }
+        if (!user) throw new ExistinEntityError("Incorrect credentials");
 
         // Kontrollime, kas parool on õige
         const isPasswordValid = await bcryptjs.compare(password, user.password); // Kasutame bcryptjs
