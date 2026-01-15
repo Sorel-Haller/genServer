@@ -3,3 +3,5 @@ const errorHandler = (error, request, response, next) => {
         message: error.message || 'Internal Server Error'
     });
 };
+
+export default errorHandler;
