@@ -1,10 +1,8 @@
-import AppError from "./AppError.js";
+import ValidationError from "../utils/ValidationError.js";
 
-class ValidationError extends AppError {
-    constructor(message, details) {
-        super(message, 422);
-        this.details = details;
-    }  
-}
-
-export default ValidationError;
+export const errorHandler = (error, request, response, next) => {    
+    response.status(error.statusCode || 500).json({        
+        message: error.message || 'Internal Server Error',        
+        details: error instanceof ValidationError ? error.details : undefined    
+    });
+};
