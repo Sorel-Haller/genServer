@@ -2,6 +2,7 @@ import prisma from '../config/prisma.js';
 import { QueryBuilder } from "../utils/QueryBuilder.js";
 import AppError from '../utils/AppError.js';
 import NotFoundError from '../utils/NotFoundError.js';
+import { ne } from '@faker-js/faker';
 
 export const getAllBooks = async (request, response) => {
     try {
@@ -32,11 +33,7 @@ export const getAllBooks = async (request, response) => {
             meta,
         });
     } catch (exception) {
-        console.log(exception);
-        response.status(500).json({
-            message: "Something went wrong",
-            error: exception.message
-        })
+        next(exception);
     }
 };
 
@@ -80,10 +77,7 @@ export const createBook = async (request, response) => {
             data: newBook
         })
     } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
+        next(exception);
     }
 };
 
@@ -116,10 +110,7 @@ export const updateBook = async (request, response) => {
         })
 
     } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
+        next(exception);
     }
 };
 
@@ -137,9 +128,6 @@ export const deleteBook = async (request, response) => {
             message: 'Successfully Deleted',
         })
     } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
+        next(exception);
     }
 };
