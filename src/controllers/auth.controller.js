@@ -60,9 +60,8 @@ export const register = async (request, response) => {
             }
         });
 
-        response.status(201).json({
-            message: 'User registered successfully'
-        });
+        response.status(201);
+        
     } catch (exception) {
         // Erroori käsitlemine
         console.error(exception);
@@ -78,21 +77,12 @@ export const login = async (request, response) => {
     try {
         const { email, password } = request.body;
 
-        // Kontrollime, kas kasutaja on olemas
         const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) throw new NotFpundError("Incorrect credentials");
 
-        if (!user) throw new ExistinEntityError("Incorrect credentials");
-
-        // Kontrollime, kas parool on õige
         const isPasswordValid = await bcryptjs.compare(password, user.password); // Kasutame bcryptjs
-
-        if (!isPasswordValid) {
-            return response.status(401).json({
-                message: 'Invalid credentials'
-            });
-        }
-
-        // Loome JWT tokeni
+        if (!isPasswordValid) throw new AuthentificationError("Invalid credentials");
+        
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         return response.status(200).json({
@@ -100,7 +90,6 @@ export const login = async (request, response) => {
             token
         });
     } catch (exception) {
-        // Erroori käsitlemine
         console.error(exception);
         response.status(500).json({
             message: 'Something went wrong during login',
