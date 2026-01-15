@@ -72,7 +72,7 @@ export const createBook = async (request, response) => {
             }
         });
 
-        response.status(201);
+        response.sendStatus(201);
     } catch (exception) {
         next(exception);
     }

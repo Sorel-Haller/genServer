@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import errorHandler from "./middlewares/errorHandler.js"; 
 
+
 const app = express();
 const PORT = 3000;
 
