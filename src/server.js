@@ -1,4 +1,5 @@
 import express from 'express';
+import helmet from "helmet";
 import bookRoutes from './routes/book.routes.js';
 import authorRoutes from "./routes/author.routes.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -9,7 +10,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 const app = express();
 const PORT = 3000;
 
-// Middleware, mis lubab töödelda JSON body-sid
+app.use(helmet());
 app.use(express.json());
 
 // Test marsuut, et server töötab
