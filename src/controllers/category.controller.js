@@ -1,8 +1,3 @@
-import prisma from "../config/prisma.js";
-import { QueryBuilder } from "../utils/QueryBuilder.js";
-import NotFoundError from "../utils/NotFoundError.js";
-import ValidationError from "../utils/ValidationError.js";
-
 class CategoryController {
     constructor(categoryService) {
         this.categoryService = categoryService;
