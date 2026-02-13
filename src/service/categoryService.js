@@ -18,13 +18,15 @@ class CategoryService {
         const prismaQuery = Builder.buildPrismaQuery();
 
         const [categories, count] = await Promise.all([
-            prisma.category.getAll(prismaQuery),
-            prisma.category.count( prismaQuery ),
+            this.categoryRepository.getAll(prismaQuery),
+            this.categoryRepository.count( prismaQuery ),
         ]);
+
+        console.log(categories)
 
         const meta = Builder.getPaginationMeta(count);
 
-        return { data: categories, meta };
+        return { categories, meta };
     }
 
     async createCategory(name) {
