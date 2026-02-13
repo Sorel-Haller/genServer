@@ -1,7 +1,9 @@
 import prisma from '../config/prisma.js';
-import {QueryBuilder} from "../utils/QueryBuilder.js";
+import { QueryBuilder } from "../utils/QueryBuilder.js";
+import NotFoundError from "../utils/NotFoundError.js";
+import ValidationError from "../utils/ValidationError.js";
 
-export const getAllAuthors = async (request, response) => {
+export const getAllAuthors = async (request, response, next) => {
     try {
         const Builder = new QueryBuilder(request.query, {
             defaultSort: 'created_at',
@@ -27,115 +29,109 @@ export const getAllAuthors = async (request, response) => {
             data: authors,
             meta
         });
+
     } catch (exception) {
-        console.log(exception);
-        response.status(500).json({
-            message: "Something went wrong",
-            error: exception.message
-        })
+        next(exception);
     }
 };
 
-export const getAuthorById = async (request, response) => {
+export const getAuthorById = async (request, response, next) => {
     try {
         const idFromURL = request.params?.id;
 
-        const book = await prisma.author.findUnique({
+        const author = await prisma.author.findUnique({
             where: {
                 id: Number(idFromURL)
             }
         });
 
-        if (!book) {
-            response.status(404).json({
-                message: 'Not Found'
-            })
+        if (!author) {
+            throw new NotFoundError(`Author with id ${idFromURL} not found`);
         }
 
         response.status(200).json({
             message: 'Successfully Found Author',
-            data: book
-        })
+            data: author
+        });
+
     } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
+        next(exception);
     }
 };
 
-export const createAuthor = async (request, response) => {
+export const createAuthor = async (request, response, next) => {
     try {
         const { name } = request.body;
 
-        const newBook = await prisma.author.create({
-            data: {
-                name
-            }
+        if (!name) {
+            throw new ValidationError("Author name is required", {
+                field: "name"
+            });
+        }
+
+        const newAuthor = await prisma.author.create({
+            data: { name }
         });
 
         response.status(201).json({
             message: 'Successfully Created Author',
-            data: newBook
-        })
+            data: newAuthor
+        });
+
     } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
+        next(exception);
     }
 };
 
-export const updateAuthor = async (request, response) => {
+export const updateAuthor = async (request, response, next) => {
     try {
         const { id } = request.params;
         const { name } = request.body;
 
-        const updatedBook = await prisma.author.update({
-            where: {
-                id: Number(id),
-            },
-            data: {
-                name
-            }
+        const existingAuthor = await prisma.author.findUnique({
+            where: { id: Number(id) }
         });
 
-        if (!updatedBook) {
-            response.status(404).json({
-                message: 'Not Found'
-            })
+        if (!existingAuthor) {
+            throw new NotFoundError(`Author with id ${id} not found`);
         }
+
+        const updatedAuthor = await prisma.author.update({
+            where: { id: Number(id) },
+            data: { name }
+        });
 
         response.status(200).json({
             message: 'Successfully Updated Author',
-            data: updatedBook
-        })
+            data: updatedAuthor
+        });
 
     } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
+        next(exception);
     }
 };
 
-export const deleteAuthor = async (request, response) => {
+export const deleteAuthor = async (request, response, next) => {
     try {
-        const bookId = request.params?.id;
+        const authorId = request.params?.id;
+
+        const existingAuthor = await prisma.author.findUnique({
+            where: { id: Number(authorId) }
+        });
+
+        if (!existingAuthor) {
+            throw new NotFoundError(`Author with id ${authorId} not found`);
+        }
 
         await prisma.author.delete({
-            where: {
-                id: Number(bookId)
-            }
-        })
+            where: { id: Number(authorId) }
+        });
 
         response.status(200).json({
-            message: 'Successfully Deleted',
-        })
+            message: 'Successfully Deleted'
+        });
+
     } catch (exception) {
-        response.status(500).json({
-            message: 'Something went wrong',
-            error: exception.message
-        })
+        next(exception);
     }
 };
