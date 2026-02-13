@@ -20,6 +20,19 @@ class CategoryController {
             next(exception);
         }
     }
+
+    async create(request, response, next) {
+        try {
+            const{name} = request.body
+            const createdEntity = await this.categoryService.createCategory(name);
+            response.status(201).json({
+                message: 'Category created',
+                createdEntity
+            });
+        } catch (exception) {
+            next(exception)
+        }
+    }
 };
 
 export const index = async (request, response, next) => {

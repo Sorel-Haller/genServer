@@ -30,11 +30,11 @@ class CategoryService {
 
     async createCategory(name) {
         if(!name) throw new NotFoundError("Category name is required")
-        await this.categoryRepository.update(name);
+        return this.categoryRepository.update(name);
     }
 
     async updateCategory(id, name) {
-        await this.categoryRepository.update(id, name);
+        return this.categoryRepository.update(id, name);
     }
 
     async deleteCategory(id) {
