@@ -9,7 +9,7 @@ class CategoryRepository {
     }
 
     async count(queryBuilder) {
-        return this.prisma.category.count(queryBuilder);
+        return this.prisma.category.count({ where: queryBuilder.where });
     }
 
     async create(name) {

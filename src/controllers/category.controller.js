@@ -3,6 +3,25 @@ import { QueryBuilder } from "../utils/QueryBuilder.js";
 import NotFoundError from "../utils/NotFoundError.js";
 import ValidationError from "../utils/ValidationError.js";
 
+class CategoryController {
+    constructor(categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    async index(request, response, next) {
+        try {
+            const {categories, meta} = await this.categoryService.getCategory(request.query);
+            response.status(200).json({
+                message: 'All categories',
+                data: categories,
+                meta
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+};
+
 export const index = async (request, response, next) => {
     try {
         const Builder = new QueryBuilder(request.query, {
@@ -13,8 +32,6 @@ export const index = async (request, response, next) => {
                 'books': { include: { book: true } }
             }
         });
-
-        const prismaQuery = Builder.buildPrismaQuery();
 
         const [categories, count] = await Promise.all([
             prisma.category.findMany(prismaQuery),
