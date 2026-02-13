@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import * as CategoryController from "../controllers/category.controller.js";
 import { validateBody } from "../middlewares/validator.middleware.js";
 import { categorySchema } from "../validations/category.validation.js";
 import {authenticateToken} from "../middlewares/auth.middleware.js";
@@ -18,6 +17,6 @@ const router = Router();
 router.get('/categories', controller.index.bind(controller));
 router.post('/categories', authenticateToken, validateBody(categorySchema), controller.create.bind(controller));
 router.put('/categories/:id', authenticateToken, validateBody(categorySchema), controller.update.bind(controller));
-router.delete('/categories/:id', authenticateToken, controller.destroy.bind(controller));
+router.delete('/categories/:id', authenticateToken, controller.destroy);
 
 export default router;

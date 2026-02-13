@@ -1,4 +1,3 @@
-import NotFoundError from "../utils/NotFoundError";
 import { QueryBuilder } from "../utils/QueryBuilder.js";
 
 class CategoryService {
@@ -29,7 +28,6 @@ class CategoryService {
     }
 
     async createCategory(name) {
-        if(!name) throw new NotFoundError("Category name is required")
         return this.categoryRepository.update(name);
     }
 
@@ -38,7 +36,6 @@ class CategoryService {
     }
 
     async deleteCategory(id) {
-        if(!id) throw new NotFoundError("Category id is required")
         await this.categoryRepository.destroy(id);
     }
 }
