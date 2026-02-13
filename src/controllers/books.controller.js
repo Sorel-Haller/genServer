@@ -1,10 +1,8 @@
 import prisma from '../config/prisma.js';
 import { QueryBuilder } from "../utils/QueryBuilder.js";
-import AppError from '../utils/AppError.js';
-import NotFoundError from '../utils/NotFoundError.js';
-import { ne } from '@faker-js/faker';
+import NotFoundError from "../utils/NotFoundError.js";
 
-export const getAllBooks = async (request, response) => {
+export const getAllBooks = async (request, response, next) => {
     try {
         const Builder = new QueryBuilder(request.query, {
             defaultSort: 'created_at',
@@ -17,8 +15,6 @@ export const getAllBooks = async (request, response) => {
         });
 
         const prismaQuery = Builder.buildPrismaQuery();
-
-        console.log(prismaQuery);
 
         const [books, count] = await Promise.all([
             prisma.book.findMany(prismaQuery),
@@ -47,23 +43,22 @@ export const getBookById = async (request, response, next) => {
             }
         });
 
-        if (!book) throw new NotFoundError("Book with id ${idFromURL} not found");
+        if (!book) throw new NotFoundError(`Book with id ${idFromURL} not found`);
 
         response.status(200).json({
             message: 'Successfully Found Book',
             data: book
         })
-
     } catch (exception) {
         next(exception);
     }
 };
 
-export const createBook = async (request, response) => {
+export const createBook = async (request, response, next) => {
     try {
         const { title, description, thumbnail_url, release_year } = request.body;
 
-        await prisma.book.create({
+       await prisma.book.create({
             data: {
                 title,
                 description,
@@ -78,7 +73,7 @@ export const createBook = async (request, response) => {
     }
 };
 
-export const updateBook = async (request, response) => {
+export const updateBook = async (request, response, next) => {
     try {
         const { id } = request.params;
         const { title, description, thumbnail_url, release_year } = request.body;
@@ -111,7 +106,7 @@ export const updateBook = async (request, response) => {
     }
 };
 
-export const deleteBook = async (request, response) => {
+export const deleteBook = async (request, response, next) => {
     try {
         const bookId = request.params?.id;
 

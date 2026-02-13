@@ -1,4 +1,4 @@
-import ValidationError from '../utils/ValidationError.js';
+import ValidationError from "../utils/ValidationError.js";
 
 export const validate = (schema, source = 'body') => {
     return (request, response, next) => {
@@ -21,7 +21,7 @@ export const validate = (schema, source = 'body') => {
                 };
             });
 
-            throw new ValidationError('Validation Failed', errorBag);
+            throw new ValidationError("Validation failed", errorBag);
         }
 
         if(source === 'query') {

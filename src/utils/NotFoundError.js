@@ -1,8 +1,7 @@
-import { de } from "@faker-js/faker";
-import AppError from './AppError.js';
+import AppError from "./AppError.js";
 
 class NotFoundError extends AppError {
-    constructor(message, ) {
+    constructor(message) {
         super(message, 404);
     }
 }

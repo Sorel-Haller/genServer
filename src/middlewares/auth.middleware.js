@@ -1,22 +1,22 @@
 import jwt from 'jsonwebtoken';
 import prisma from '../config/prisma.js';
+import AuthenticationError from "../utils/AuthenticationError.js";
 
 export const authenticateToken = async (request, response, next) => {
     try {
-        const token = request.headers.authorization?.replace('Bearer ', '');
+            const token = request.headers.authorization?.replace('Bearer ', '');
 
-        if (!token) throw new AuthentificationError("Token not provided");
+            if (!token) throw new AuthenticationError("Token not provided");
 
-        const payLoad = jwt.verify(token, process.env.JWT_SECRET);
+            const payload = jwt.verify(token, process.env.JWT_SECRET);
+            const user = await prisma.user.findUnique({ where: { id: payload.id } });
 
-        const user = await prisma.user.findUnique({where: {id: payLoad.id}});
-        request.user = {
-            id: user.id,
-            email: user.email
-        };
+            request.user = {
+                id: user.id,
+                email: user.email
+            };
 
-
-        next();
+            next();
     } catch (exception) {
         next(exception);
     }
@@ -63,5 +63,4 @@ export const authenticateToken = async (request, response, next) => {
     } catch (exception) {
         next(exception);
     }
-};
-*/
+};*/

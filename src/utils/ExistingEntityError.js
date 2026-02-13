@@ -1,11 +1,9 @@
-import AppError from "./AppError.js"
+import AppError from "./AppError.js";
 
-class ExistsingEntityError extends AppError {
-  constructor(message) {
-    super(message, 401);
-
-  }
+class ExistingEntityError extends AppError {
+    constructor(message) {
+        super(message, 409);
+    }
 }
 
 export default ExistingEntityError;
-
